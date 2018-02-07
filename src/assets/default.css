@@ -1,0 +1,28 @@
+button {
+  background-color: #4b9ae8;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 400;
+  display: block;
+  padding: 5px 15px;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  outline: inherit;
+}
+
+input {
+  font-weight: 400px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 8px;
+  outline: inherit;
+}
+
+.shadow {
+  box-shadow: 0 0 0.2em #d5d9de;
+  box-sizing: content-box;
+  border-radius: 4px;
+  padding: 20px;
+}
