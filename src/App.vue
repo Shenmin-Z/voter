@@ -1,8 +1,8 @@
 <template>
   <div class="app">
     <div class="app__start">
-      <board></board>
-      <room></room>
+      <!-- <welcome></welcome> -->
+      <!-- <room></room> -->
     </div>
     <div class="app__in">
       <board></board>
@@ -52,5 +52,11 @@ html {
 }
 
 .app__start {
+
+}
+
+.app__in {
+  align-self: flex-start;
+  margin-top: 25px;
 }
 </style>
