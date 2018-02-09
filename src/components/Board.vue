@@ -5,7 +5,8 @@
     <div
       class="board__left"
     >
-      <board-cards></board-cards>
+      <!-- <board-cards></board-cards> -->
+      <board-result></board-result>
     </div>
     <div
       class="board__right"
