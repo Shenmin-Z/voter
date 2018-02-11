@@ -3,60 +3,79 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+import { avg, count, total } from './helpers'
+import { roles } from '../config'
+
 export default new Vuex.Store({
   state: {
     room: 'room name',
+    me: 'alice',
+    byRole: false,
     users: [
       {
         name: 'alice',
-        role: 'dev'
+        role: 'Dev'
       },
       {
         name: 'bob',
-        role: 'qa'
+        role: 'QA'
       },
       {
         name: 'ding',
-        role: 'dev'
+        role: 'Dev'
       },
       {
         name: 'lala',
-        role: 'dev'
+        role: 'Dev'
       },
       {
         name: 'jim',
-        role: 'dev'
+        role: 'Dev'
       },
       {
         name: 'tom',
-        role: 'qa'
+        role: 'QA'
       }
     ],
     votes: [
       { name: 'alice', vote: 3 },
       { name: 'bob', vote: 3 },
-      { name: 'ding', vote: 4 },
+      { name: 'ding', vote: 3 },
       { name: 'lala', vote: 5 },
       { name: 'jim', vote: 2 },
       { name: 'tom', vote: 3 }
     ]
   },
   getters: {
+    byRole ({ byRole }) {
+      return byRole
+    },
+    // Voting result
     avg ({ votes }) {
-      return votes.map(v => v.vote)
-        .filter(Number.isInteger)
-        .reduce((acc, i) => acc + i) / votes.length
+      return avg(votes)
     },
     count ({ votes }) {
-      return votes.map(v => v.vote)
-        .filter(Number.isInteger)
-        .reduce((acc, i) => {
-          acc[i] ? acc[i]++ : acc[i] = 1
-          return acc
-        }, {})
+      return count(votes)
+    },
+    votesByRole ({ users, votes }) {
+      return roles.filter(r => r.vote !== false)
+        .map(r => r.name)
+        .map(n => {
+          const names = users.filter(u => u.role === n).map(u => u.name)
+          return {
+            role: n,
+            votes: votes.filter(v => names.indexOf(v.name) !== -1)
+          }
+        })
+        .map(i => ({
+          name: i.role,
+          avg: avg(i.votes),
+          count: count(i.votes),
+          total: total(i.votes)
+        }))
+    },
+    total ({ votes }) {
+      return total(votes)
     }
-  },
-  mutations: {
-
   }
 })
