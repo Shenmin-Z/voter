@@ -18,6 +18,12 @@ export const cardValues = [
 ]
 
 export const pieColors = [
+  '#058ED9',
+  '#F4FF52',
+  '#53FF45',
+  '#1E2EDE',
+  '#54C6EB',
+  '#06D6A0',
   '#E56F67',
   '#258E8E',
   '#6BA05D',

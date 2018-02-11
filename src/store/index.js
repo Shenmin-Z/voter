@@ -10,7 +10,7 @@ export default new Vuex.Store({
   state: {
     room: 'room name',
     me: 'alice',
-    byRole: false,
+    byRole: true,
     users: [
       {
         name: 'alice',
@@ -76,6 +76,11 @@ export default new Vuex.Store({
     },
     total ({ votes }) {
       return total(votes)
+    }
+  },
+  mutations: {
+    toggleCountMode (state) {
+      state.byRole = !state.byRole
     }
   }
 })
