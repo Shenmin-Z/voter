@@ -1,6 +1,6 @@
 export const avg = (votes) => votes.map(v => v.vote)
   .filter(Number.isInteger)
-  .reduce((acc, i) => acc + i) / votes.length
+  .reduce((acc, i, ind, arr) => acc + i / arr.length, 0)
 
 export const count = (votes) => {
   const obj = votes.map(v => v.vote)

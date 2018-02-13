@@ -4,15 +4,16 @@
   >
     <div 
       class="tab"
-      @click="toggleCountMode"
     >
       <div 
         class="tab__item"
         :class="{ 'tab__item--inactive': byRole}"  
+        @click="setCountMode(false)"
       >Overall</div>
       <div 
         class="tab__item"
         :class="{ 'tab__item--inactive': !byRole}"  
+        @click="setCountMode(true)"
       >By Role</div>
     </div>
     <div
@@ -55,7 +56,7 @@
 
 <script>
 import Pie from './Pie'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 
 import { pieColors } from '../config'
 
@@ -70,9 +71,11 @@ export default {
     }
   },
   computed: {
+    ...mapState([
+      'byRole'
+    ]),
     ...mapGetters([
       'avg',
-      'byRole',
       'count',
       'total',
       'votesByRole'
@@ -92,7 +95,7 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'toggleCountMode'
+      'setCountMode'
     ]),
     avgString (a) {
       return Math.round(a * 100) / 100

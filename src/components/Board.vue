@@ -12,6 +12,7 @@
       class="board__right"
     >
       <board-buttons></board-buttons>
+      <board-users></board-users>
     </div>
   </div>
 </template>

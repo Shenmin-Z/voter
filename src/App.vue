@@ -1,5 +1,14 @@
 <template>
   <div class="app">
+    <div 
+      class="app__header"
+      v-if="room && me"
+    >
+      <div class="inner">
+        <div class="inner__room">{{ room }}</div>
+        <div class="inner__self">{{ me }}</div>
+      </div>
+    </div>
     <div class="app__start">
       <!-- <welcome></welcome> -->
       <!-- <room></room> -->
@@ -14,6 +23,7 @@
 import Board from './components/Board'
 import Room from './components/Room'
 import Welcome from './components/Welcome'
+import { mapState } from 'vuex'
 
 import './assets/default.css'
 
@@ -28,6 +38,12 @@ export default {
     return {
       msg: 'Welcome to Your Vue.js App'
     }
+  },
+  computed: {
+    ...mapState([
+      'room',
+      'me'
+    ])
   }
 }
 </script>
@@ -47,8 +63,35 @@ html {
 .app {
   display: flex;
   align-items: center;
+  align-content: flex-start;
   justify-content: center;
+  flex-wrap: wrap;
   height: 100%;
+}
+
+.app__header {
+  width: 100%;
+  padding: 15px;
+  background-color: #fff;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.inner {
+  width: 600px;
+  margin: 0 auto;
+  line-height: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.inner__room {
+  font-size: 30px;
+  font-family: Helvetica, sans-serif;
+}
+
+.inner__self {
+
 }
 
 .app__start {
@@ -57,6 +100,6 @@ html {
 
 .app__in {
   align-self: flex-start;
-  margin-top: 25px;
+  margin-top: 40px;
 }
 </style>

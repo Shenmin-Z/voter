@@ -10,7 +10,8 @@ export default new Vuex.Store({
   state: {
     room: 'room name',
     me: 'alice',
-    byRole: true,
+    byRole: true, // Show voting result by voter' role or simply overall result
+    finished: false,
     users: [
       {
         name: 'alice',
@@ -43,13 +44,9 @@ export default new Vuex.Store({
       { name: 'ding', vote: 3 },
       { name: 'lala', vote: 5 },
       { name: 'jim', vote: 2 },
-      { name: 'tom', vote: 3 }
     ]
   },
   getters: {
-    byRole ({ byRole }) {
-      return byRole
-    },
     // Voting result
     avg ({ votes }) {
       return avg(votes)
@@ -79,8 +76,8 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    toggleCountMode (state) {
-      state.byRole = !state.byRole
+    setCountMode (state, v) {
+      state.byRole = v
     }
   }
 })
