@@ -9,17 +9,24 @@
         <div class="inner__self">{{ me }}</div>
       </div>
     </div>
-    <div class="app__start">
-      <!-- <welcome></welcome> -->
-      <!-- <room></room> -->
+    <div 
+      class="app__start"
+      v-if="!room || !me"
+    >
+      <welcome v-if="!me"></welcome>
+      <room v-else></room>
     </div>
-    <div class="app__in">
+    <div 
+      class="app__in"
+      v-if="room && me"
+    >
       <board></board>
     </div>
   </div>
 </template>
 
 <script>
+import io from 'socket.io-client'
 import Board from './components/Board'
 import Room from './components/Room'
 import Welcome from './components/Welcome'
@@ -33,6 +40,10 @@ export default {
     Board,
     Room,
     Welcome
+  },
+  mounted () {
+    const socket = io(location.protocol + '//' + location.hostname)
+    socket.on('rooms', (rooms) => console.log(rooms))
   },
   data () {
     return {

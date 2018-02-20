@@ -49,7 +49,13 @@ module.exports = {
   devServer: {
     historyApiFallback: true,
     noInfo: true,
-    overlay: true
+    overlay: true,
+    proxy: {
+      '/socket.io': {
+        target: 'http://locahost',
+        ws: true
+      }
+    }
   },
   performance: {
     hints: false

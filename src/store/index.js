@@ -8,8 +8,9 @@ import { roles } from '../config'
 
 export default new Vuex.Store({
   state: {
-    room: 'room name',
-    me: 'alice',
+    room: '',
+    me: '',
+    role: '',
     byRole: true, // Show voting result by voter' role or simply overall result
     finished: false,
     users: [
@@ -76,6 +77,10 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    addSelf (state, { name, role }) {
+      state.me = name
+      state.role = role
+    },
     setCountMode (state, v) {
       state.byRole = v
     }
