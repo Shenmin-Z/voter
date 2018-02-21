@@ -11,14 +11,14 @@
     </div>
     <div 
       class="app__start"
-      v-if="!room || !me"
+      v-if="!connected"
     >
       <welcome v-if="!me"></welcome>
       <room v-else></room>
     </div>
     <div 
       class="app__in"
-      v-if="room && me"
+      v-else
     >
       <board></board>
     </div>
@@ -26,11 +26,10 @@
 </template>
 
 <script>
-import io from 'socket.io-client'
 import Board from './components/Board'
 import Room from './components/Room'
 import Welcome from './components/Welcome'
-import { mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 
 import './assets/default.css'
 
@@ -42,8 +41,7 @@ export default {
     Welcome
   },
   mounted () {
-    const socket = io(location.protocol + '//' + location.hostname)
-    socket.on('rooms', (rooms) => console.log(rooms))
+    this.preConnect()
   },
   data () {
     return {
@@ -52,8 +50,16 @@ export default {
   },
   computed: {
     ...mapState([
+      'connected',
       'room',
       'me'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'preConnect'
+    ]),
+    ...mapMutations([
     ])
   }
 }

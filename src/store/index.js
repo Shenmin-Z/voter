@@ -1,16 +1,23 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import io from 'socket.io-client'
 
 Vue.use(Vuex)
 
 import { avg, count, total } from './helpers'
 import { roles } from '../config'
 
+const url = location.protocol + '//' + location.hostname
+let cs // connection socket
+let rs // room socket
+
 export default new Vuex.Store({
   state: {
     room: '',
+    rooms: [],
     me: '',
     role: '',
+    connected: false,
     byRole: true, // Show voting result by voter' role or simply overall result
     finished: false,
     users: [
@@ -77,12 +84,39 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    loadRooms (state, { rooms }) {
+      rooms.forEach(r => state.rooms.push(r))
+    },
     addSelf (state, { name, role }) {
       state.me = name
       state.role = role
     },
+    setConnected (state, v) {
+      state.connected = v
+    },
     setCountMode (state, v) {
       state.byRole = v
+    }
+  },
+  actions: {
+    preConnect ({ commit }) {
+      cs = io(url)
+      cs.on('rooms', (rooms) => commit('loadRooms', { rooms }))
+    },
+    preJoin ({ dispatch, state }, { roomName }) {
+      if (state.connected) return
+      cs.emit('pre-join', { room: roomName })
+      cs.on('ack', () => {
+        rs = io(url + '/' + roomName)
+        dispatch('join')
+      })
+    },
+    join ({ commit, state }) {
+      const { me: name, role } = state
+      rs.emit('join', { name, role })
+      rs.on('ack', () => commit('setConnected', true))
+
+      rs.on('joined', ({ name, role }) => console.log(name))
     }
   }
 })

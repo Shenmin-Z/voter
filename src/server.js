@@ -33,6 +33,8 @@ rooms.addRoom = (name) => rooms.push({
   users: [],
   votes: []
 })
+rooms.addRoom('test A')
+rooms.addRoom('test B')
 
 io.on('connection', (socket) => {
   socket.emit('rooms', rooms.map(r => r.name))
@@ -40,17 +42,21 @@ io.on('connection', (socket) => {
     if (!rooms.find(r => r.name === room)) {
       newRoom(room)
     }
+    socket.emit('ack')
   })
 })
 
 function newRoom (name) {
+  rooms.addRoom(name)
   io.of('/' + name)
     .on('connection', (socket) => {
       let userName = ''
       const room = rooms.find(r => r.name === name)
       socket.on('join', ({ name, role }) => {
+        console.log(name + ' joined')
         userName = name
-        socket.emit('joined', { name, role })
+        socket.emit('ack')
+        socket.broadcast.emit('joined', { name, role })
         room.users.push({ name, role })
       })
       socket.on('disconnect', (socket) => {
