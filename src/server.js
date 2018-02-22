@@ -33,34 +33,58 @@ rooms.addRoom = (name) => rooms.push({
   users: [],
   votes: []
 })
-rooms.addRoom('test A')
-rooms.addRoom('test B')
 
 io.on('connection', (socket) => {
   socket.emit('rooms', rooms.map(r => r.name))
-  socket.on('pre-join', ({ room }) => {
+  socket.on('pre-join', ({ room }, fn) => {
     if (!rooms.find(r => r.name === room)) {
       newRoom(room)
     }
-    socket.emit('ack')
+    fn()
   })
 })
 
 function newRoom (name) {
   rooms.addRoom(name)
-  io.of('/' + name)
-    .on('connection', (socket) => {
-      let userName = ''
-      const room = rooms.find(r => r.name === name)
-      socket.on('join', ({ name, role }) => {
-        console.log(name + ' joined')
-        userName = name
-        socket.emit('ack')
-        socket.broadcast.emit('joined', { name, role })
-        room.users.push({ name, role })
-      })
-      socket.on('disconnect', (socket) => {
-        socket.broadcast.emit('disconnected', { name: userName })
-      })
+  const rs = io.of('/' + name)
+  const userMap = new Map()
+  rs.on('connection', (socket) => {
+    let user
+    const room = rooms.find(r => r.name === name)
+    const push = () => rs.emit('push', room)
+    socket.on('join', ({ name, role }, fn) => {
+      console.log(name + ' joined')
+      fn()
+      user = { name, role }
+      room.users.push(user)
+      push()
     })
+    socket.on('disconnect', () => {
+      room.users = room.users.filter(u => u !== user)
+      push()
+    })
+    socket.on('vote', (vote) => {
+      if (userMap.has(user)) {
+        userMap.get(user).vote = vote
+      } else {
+        const v = {
+          name: user.name,
+          vote
+        }
+        userMap.set(user, v)
+        room.votes.push(v)
+      }
+      push()
+    })
+    socket.on('start', () => {
+      room.finished = false
+      room.votes = []
+      userMap.clear()
+      push()
+    })
+    socket.on('finish', () => {
+      room.finished = true
+      push()
+    })
+  })
 }

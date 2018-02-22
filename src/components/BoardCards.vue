@@ -2,8 +2,10 @@
   <div class="cards">
     <div
       class="cards__card"
+      :class="{ 'cards__card--active': votes.length && c === active }"
       v-for="c in cardValues"
       :key="c"
+      @click="select(c)"
     >
       {{ c }}
     </div>
@@ -12,12 +14,28 @@
 
 <script>
 import { cardValues } from '../config'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: '',
   data () {
     return {
+      active: null,
       cardValues
+    }
+  },
+  computed: {
+    ...mapState([
+      'votes'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'vote'
+    ]),
+    select (v) {
+      this.active = v
+      this.vote(v)
     }
   }
 }

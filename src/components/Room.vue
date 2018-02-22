@@ -1,6 +1,6 @@
 <template>
   <div class="room shadow">
-    <div v-if="rooms">
+    <div v-if="rooms.length">
       <div class="room__title">Existing Rooms</div>
       <div
         class="room__card"
@@ -47,6 +47,7 @@ export default {
     enterRoom () {
       if (this.name) {
         this.preJoin({ roomName: this.name })
+        localStorage.setItem('room', this.name)
       }
     }
   }

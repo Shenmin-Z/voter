@@ -47,6 +47,9 @@ export default {
     addMyself () {
       const { name, role } = this
       this.addSelf({ name, role })
+      // Store in localStorage
+      localStorage.setItem('name', name)
+      localStorage.setItem('role', role)
     }
   }
 }

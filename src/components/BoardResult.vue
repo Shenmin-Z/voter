@@ -17,9 +17,10 @@
       >By Role</div>
     </div>
     <div
-     class="result"
-     v-for="r in result"
-     :key="r.name"
+      class="result"
+      v-for="r in result"
+      :key="r.name"
+      v-show="r.total"
     >
       <div class="result__title">{{ r.name }}</div>
       <div

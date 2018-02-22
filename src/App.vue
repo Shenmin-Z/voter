@@ -1,12 +1,21 @@
 <template>
-  <div class="app">
+  <div 
+    class="app"
+    :class="[connected ? 'app--start' : 'app--center']"
+  >
     <div 
       class="app__header"
-      v-if="room && me"
+      v-if="connected"
     >
       <div class="inner">
         <div class="inner__room">{{ room }}</div>
-        <div class="inner__self">{{ me }}</div>
+        <div class="inner__self">
+          {{ me }}
+          <span 
+            class="exit"
+            @click="exit"
+          >Exit</span>
+        </div>
       </div>
     </div>
     <div 
@@ -42,6 +51,11 @@ export default {
   },
   mounted () {
     this.preConnect()
+    const [name, role, room] = ['name', 'role', 'room'].map(key => localStorage.getItem(key))
+    if (name && role && room) {
+      this.addSelf({ name, role })
+      this.preJoin({ roomName: room })
+    }
   },
   data () {
     return {
@@ -57,10 +71,18 @@ export default {
   },
   methods: {
     ...mapActions([
-      'preConnect'
+      'preConnect',
+      'preJoin'
     ]),
     ...mapMutations([
-    ])
+      'addSelf',
+      'reset'
+    ]),
+    exit () {
+      ['name', 'role', 'room'].map(key => localStorage.removeItem(key))
+      this.reset()
+      location.href = '/'
+    }
   }
 }
 </script>
@@ -80,10 +102,16 @@ html {
 .app {
   display: flex;
   align-items: center;
-  align-content: flex-start;
-  justify-content: center;
-  flex-wrap: wrap;
+  flex-direction: column;
   height: 100%;
+}
+
+.app--center {
+  justify-content: center;
+}
+
+.app--start {
+  justify-content: flex-start;
 }
 
 .app__header {
@@ -91,6 +119,7 @@ html {
   padding: 15px;
   background-color: #fff;
   border-bottom: 1px solid #edf2f7;
+  box-sizing: border-box;
 }
 
 .inner {
@@ -107,16 +136,19 @@ html {
   font-family: Helvetica, sans-serif;
 }
 
-.inner__self {
-
-}
-
 .app__start {
-
+  align-self: center;
 }
 
 .app__in {
-  align-self: flex-start;
   margin-top: 40px;
+}
+
+.exit {
+  border: 1px solid #4b9ae8;
+  border-radius: 5px;
+  color: #4b9ae8;
+  padding: 0 10px;
+  cursor: pointer;
 }
 </style>

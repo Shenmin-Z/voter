@@ -2,16 +2,43 @@
   <div class="buttons shadow">
     <button
       class="buttons__btn"
-    >Start Voting</button>
+      @click="startVote"
+    >
+      Restart
+    </button>
     <button
       class="buttons__btn"
-    >Finish Voting</button>
+      :class="{ invalid: !votes.length }"
+      v-if="!finished"
+      @click="finish"
+    >
+      Finish
+    </button>
   </div>
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
+
 export default {
-  name: ''
+  name: 'Buttons',
+  computed: {
+    ...mapState([
+      'finished',
+      'votes'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'startVote',
+      'finishVote'
+    ]),
+    finish () {
+      if (this.votes.length) {
+        this.finishVote()
+      }
+    }
+  }
 }
 </script>
 

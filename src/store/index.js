@@ -10,50 +10,20 @@ import { roles } from '../config'
 const url = location.protocol + '//' + location.hostname
 let cs // connection socket
 let rs // room socket
+const initialState = {
+  room: '',
+  rooms: [],
+  me: '',
+  role: '',
+  connected: false,
+  byRole: true, // Show voting result by voter' role or simply overall result
+  finished: false,
+  users: [],
+  votes: []
+}
 
 export default new Vuex.Store({
-  state: {
-    room: '',
-    rooms: [],
-    me: '',
-    role: '',
-    connected: false,
-    byRole: true, // Show voting result by voter' role or simply overall result
-    finished: false,
-    users: [
-      {
-        name: 'alice',
-        role: 'Dev'
-      },
-      {
-        name: 'bob',
-        role: 'QA'
-      },
-      {
-        name: 'ding',
-        role: 'Dev'
-      },
-      {
-        name: 'lala',
-        role: 'Dev'
-      },
-      {
-        name: 'jim',
-        role: 'Dev'
-      },
-      {
-        name: 'tom',
-        role: 'QA'
-      }
-    ],
-    votes: [
-      { name: 'alice', vote: 3 },
-      { name: 'bob', vote: 3 },
-      { name: 'ding', vote: 3 },
-      { name: 'lala', vote: 5 },
-      { name: 'jim', vote: 2 },
-    ]
-  },
+  state: { ...initialState },
   getters: {
     // Voting result
     avg ({ votes }) {
@@ -91,32 +61,55 @@ export default new Vuex.Store({
       state.me = name
       state.role = role
     },
+    reset (state) {
+      Object.keys(initialState).forEach(key => { state[key] = initialState[key] })
+    },
     setConnected (state, v) {
       state.connected = v
     },
     setCountMode (state, v) {
       state.byRole = v
+    },
+    setRoom (state, r) {
+      state.room = r
+    },
+    updateFromServer (state, { byRole, finished, users, votes }) {
+      state.byRole = byRole
+      state.finished = finished
+      state.users = users
+      state.votes = votes
     }
   },
   actions: {
     preConnect ({ commit }) {
       cs = io(url)
       cs.on('rooms', (rooms) => commit('loadRooms', { rooms }))
+      cs.on('disconnect', commit('reset'))
     },
-    preJoin ({ dispatch, state }, { roomName }) {
+    preJoin ({ commit, dispatch, state }, { roomName }) {
       if (state.connected) return
-      cs.emit('pre-join', { room: roomName })
-      cs.on('ack', () => {
+      cs.emit('pre-join', { room: roomName }, () => {
         rs = io(url + '/' + roomName)
+        commit('setRoom', roomName)
         dispatch('join')
       })
     },
     join ({ commit, state }) {
       const { me: name, role } = state
-      rs.emit('join', { name, role })
-      rs.on('ack', () => commit('setConnected', true))
-
-      rs.on('joined', ({ name, role }) => console.log(name))
+      rs.emit('join', { name, role }, () => commit('setConnected', true))
+      rs.on('push', (data) => {
+        console.info('Received server push')
+        commit('updateFromServer', data)
+      })
+    },
+    vote (context, vote) {
+      rs.emit('vote', vote)
+    },
+    startVote () {
+      rs.emit('start')
+    },
+    finishVote () {
+      rs.emit('finish')
     }
   }
 })

@@ -5,8 +5,8 @@
     <div
       class="board__left"
     >
-      <!-- <board-cards></board-cards> -->
-      <board-result></board-result>
+      <board-result v-if="finished"></board-result>
+      <board-cards v-else></board-cards>
     </div>
     <div
       class="board__right"
@@ -23,6 +23,8 @@ import BoardCards from './BoardCards'
 import BoardResult from './BoardResult'
 import BoardUsers from './BoardUsers'
 
+import { mapState } from 'vuex'
+
 export default {
   name: '',
   components: {
@@ -30,6 +32,11 @@ export default {
     BoardCards,
     BoardResult,
     BoardUsers
+  },
+  computed: {
+    ...mapState([
+      'finished'
+    ])
   }
 }
 </script>
