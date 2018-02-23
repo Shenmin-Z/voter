@@ -1,5 +1,8 @@
 <template>
-  <div class="buttons shadow">
+  <div 
+    class="buttons shadow"
+    v-show="isHost"
+  >
     <button
       class="buttons__btn"
       @click="startVote"
@@ -19,14 +22,19 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import { roles } from '../config'
 
 export default {
-  name: 'Buttons',
+  name: 'BoardButtons',
   computed: {
     ...mapState([
       'finished',
-      'votes'
-    ])
+      'votes',
+      'role'
+    ]),
+    isHost () {
+      return Boolean(roles.find(r => r.name === this.role).host)
+    }
   },
   methods: {
     ...mapActions([
@@ -46,6 +54,7 @@ export default {
 .buttons {
   background-color: #fff;
   padding: 5px 15px;
+  margin-bottom: 25px;
 }
 
 .buttons__btn {

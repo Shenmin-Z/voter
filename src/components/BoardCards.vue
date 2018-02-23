@@ -6,6 +6,7 @@
       v-for="c in cardValues"
       :key="c"
       @click="select(c)"
+      :title="canVote ? c : role + ' does not vote.'"
     >
       {{ c }}
     </div>
@@ -13,7 +14,7 @@
 </template>
 
 <script>
-import { cardValues } from '../config'
+import { cardValues, roles } from '../config'
 import { mapActions, mapState } from 'vuex'
 
 export default {
@@ -26,14 +27,19 @@ export default {
   },
   computed: {
     ...mapState([
+      'role',
       'votes'
-    ])
+    ]),
+    canVote () {
+      return !(roles.find(r => r.name === this.role).vote === false)
+    }
   },
   methods: {
     ...mapActions([
       'vote'
     ]),
     select (v) {
+      if (!this.canVote) return
       this.active = v
       this.vote(v)
     }

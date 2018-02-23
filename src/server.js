@@ -36,16 +36,22 @@ rooms.addRoom = (name) => rooms.push({
 
 io.on('connection', (socket) => {
   socket.emit('rooms', rooms.map(r => r.name))
+  // Needs to create room before it can be joined
   socket.on('pre-join', ({ room }, fn) => {
     if (!rooms.find(r => r.name === room)) {
+      console.log('New room: ' + room)
       newRoom(room)
     }
     fn()
   })
 })
 
+const namespaces = []
+
 function newRoom (name) {
   rooms.addRoom(name)
+  if (namespaces.includes(name)) return
+  namespaces.push(name)
   const rs = io.of('/' + name)
   const userMap = new Map()
   rs.on('connection', (socket) => {
@@ -60,8 +66,14 @@ function newRoom (name) {
       push()
     })
     socket.on('disconnect', () => {
+      console.log(user.name + ' has left')
       room.users = room.users.filter(u => u !== user)
-      push()
+      if (room.users.length > 0) {
+        push()
+      } else {
+        const index = rooms.indexOf(room)
+        rooms.splice(index, 1)
+      }
     })
     socket.on('vote', (vote) => {
       if (userMap.has(user)) {
@@ -84,6 +96,10 @@ function newRoom (name) {
     })
     socket.on('finish', () => {
       room.finished = true
+      push()
+    })
+    socket.on('mode', (byRole) => {
+      room.byRole = !room.byRole
       push()
     })
   })

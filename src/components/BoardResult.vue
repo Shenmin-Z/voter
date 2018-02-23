@@ -7,13 +7,13 @@
     >
       <div 
         class="tab__item"
-        :class="{ 'tab__item--inactive': byRole}"  
-        @click="setCountMode(false)"
+        :class="tabClass(false)"  
+        @click="setMode(false)"
       >Overall</div>
       <div 
         class="tab__item"
-        :class="{ 'tab__item--inactive': !byRole}"  
-        @click="setCountMode(true)"
+        :class="tabClass(true)"
+        @click="setMode(true)"
       >By Role</div>
     </div>
     <div
@@ -57,9 +57,9 @@
 
 <script>
 import Pie from './Pie'
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapGetters, mapActions, mapState } from 'vuex'
 
-import { pieColors } from '../config'
+import { pieColors, roles } from '../config'
 
 export default {
   name: 'BoardResult',
@@ -73,7 +73,8 @@ export default {
   },
   computed: {
     ...mapState([
-      'byRole'
+      'byRole',
+      'role'
     ]),
     ...mapGetters([
       'avg',
@@ -92,17 +93,31 @@ export default {
           total: this.total
         }]
       }
+    },
+    isHost () {
+      return Boolean(roles.find(r => r.name === this.role).host)
     }
   },
   methods: {
-    ...mapMutations([
-      'setCountMode'
+    ...mapActions([
+      'syncCountMode'
     ]),
     avgString (a) {
       return Math.round(a * 100) / 100
     },
     percentageString (p) {
       return Math.round(p * 100) + '%'
+    },
+    setMode (byRole) {
+      if (this.isHost) {
+        this.syncCountMode(byRole)
+      }
+    },
+    tabClass (negate) {
+      return {
+        'tab__item--inactive': this.byRole ^ negate,
+        'tab__item--no-pointer': !this.isHost
+      }
     }
   }
 }
@@ -129,6 +144,10 @@ export default {
 
 .tab__item--inactive {
   background-color: #edf2f7;
+}
+
+.tab__item--no-pointer {
+  cursor: default;
 }
 
 .result {

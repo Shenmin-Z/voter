@@ -50,7 +50,6 @@ export default {
 
 <style>
 .users {
-  margin-top: 25px;
   padding: 0;
   background-color: #fff;
 }

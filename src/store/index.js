@@ -67,9 +67,6 @@ export default new Vuex.Store({
     setConnected (state, v) {
       state.connected = v
     },
-    setCountMode (state, v) {
-      state.byRole = v
-    },
     setRoom (state, r) {
       state.room = r
     },
@@ -110,6 +107,11 @@ export default new Vuex.Store({
     },
     finishVote () {
       rs.emit('finish')
+    },
+    syncCountMode ({ state }, byRole) {
+      if (byRole !== state.byRole) {
+        rs.emit('mode', byRole)
+      }
     }
   }
 })
