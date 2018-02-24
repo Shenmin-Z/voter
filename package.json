@@ -2,12 +2,16 @@
   "name": "voter",
   "description": "App to vote",
   "version": "1.0.0",
+  "engines": {
+    "node": "6.11.2"
+  },
   "author": "Shenmin-Z <shenminzhou@gmail.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --hot",
     "serve": "nodemon --inspect ./src/server.js",
+    "start": "node ./src/server.js",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
