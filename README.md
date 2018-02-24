@@ -1,18 +1,31 @@
-# voter
+# An online voting app
 
-> App to vote
+A voting app for planning meeting, done with Vue and Socket.io.
 
-## Build Setup
+[Demo](https://a-voting-app-that-votes.herokuapp.com/)
+
+Voting:
+
+![voting](/docs/images/voting.PNG)
+
+Finished:
+
+![voted](/docs/images/voted.PNG)
+
+Some options can be changed in `src/config.js`
+
+## Build Setup and Development
 
 ``` bash
 # install dependencies
 npm install
 
-# serve with hot reload at localhost:8080
-npm run dev
-
 # build for production with minification
 npm run build
-```
 
-For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
+# run webpack-dev server (for hot reloading front end code)
+npm run dev
+
+# run node server that watches file change
+npm run serve
+```
