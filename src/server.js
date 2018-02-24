@@ -52,7 +52,7 @@ function newRoom (name) {
   rooms.addRoom(name)
   if (namespaces.includes(name)) return
   namespaces.push(name)
-  const rs = io.of('/' + name)
+  const rs = io.of('/' + name.split(' ').join('-'))
   const userMap = new Map()
   rs.on('connection', (socket) => {
     let user

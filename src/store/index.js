@@ -86,7 +86,7 @@ export default new Vuex.Store({
     preJoin ({ commit, dispatch, state }, { roomName }) {
       if (state.connected) return
       cs.emit('pre-join', { room: roomName }, () => {
-        rs = io(url + '/' + roomName)
+        rs = io(url + '/' + roomName.split(' ').join('-'))
         commit('setRoom', roomName)
         dispatch('join')
       })
