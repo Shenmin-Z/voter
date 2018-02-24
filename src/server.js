@@ -3,7 +3,7 @@ const io = require('socket.io')(app)
 const fs = require('fs')
 const path = require('path')
 
-app.listen(80)
+app.listen(443)
 
 // Server static files
 function handler (req, res) {
